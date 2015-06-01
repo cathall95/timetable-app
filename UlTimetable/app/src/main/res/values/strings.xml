@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Ul Timetable</string>
+    <string name="title_activity_enter_id">UL Timetable</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Change ID</string>
+    <string name="btnSubmit">Submit</string>
+    <string name="lblStudentID">Enter your student ID</string>
+    <string name="title_activity_timetable_display">Timetable</string>
+    <string name="time">Time</string>
+    <string name="dayOne">Monday</string>
+    <string name="dayTwo">Tuesday</string>
+    <string name="dayThree">Wednesday</string>
+    <string name="dayFour">Thursday</string>
+    <string name="dayFive">Friday</string>
+</resources>
