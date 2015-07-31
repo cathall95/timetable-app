@@ -9,7 +9,8 @@
     <string name="time">Time</string>
     <string name="dayOne">Monday</string>
     <string name="dayTwo">Tuesday</string>
-    <string name="dayThree">Wednesday</string>
-    <string name="dayFour">Thursday</string>
+    <string name="dayThree">Wed</string>
+    <string name="dayFour">Thur</string>
     <string name="dayFive">Friday</string>
+    <string name="reset">Refresh your timetable</string>
 </resources>

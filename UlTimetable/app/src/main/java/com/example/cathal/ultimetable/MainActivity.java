@@ -1,56 +1,63 @@
 package com.example.cathal.ultimetable;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import java.io.File;
-import java.io.FileOutputStream;
 
 public class MainActivity extends Activity {
+    SQLiteDatabase mydatabase;
+    boolean valid = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mydatabase = this.openOrCreateDatabase("characters", android.content.Context.MODE_PRIVATE, null);
+        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS timetables(id VARCHAR PRIMARY KEY,timetable VARCHAR);");
         // Check for existing timetable
         File savedTimetable = new File("ULTimetable");
         if(savedTimetable.exists()) {
             Intent goToTimetable = new Intent(MainActivity.this, DisplayTimetable.class);
             MainActivity.this.startActivity(goToTimetable);
         }
-
-        final CheckWifi cd = new CheckWifi(getApplicationContext());
-
         Button btnSubmit = (Button) findViewById(R.id.btnSubmit);
-        EditText txtID;
 
         btnSubmit.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 EditText txtID = (EditText) findViewById(R.id.txtID);
                 String ID = (txtID.getText()).toString();
                 String regexID = "[0-9]{8}";
+                final Cursor cursor;
+                cursor = mydatabase.rawQuery("Select count(*) from timetables where id='" + ID + "';",null);
+                cursor.moveToFirst();
+                    if(cursor.getInt(0) == 1) {
+                        valid = true;
+                    }
+                cursor.close();
+                boolean hasInternet = false;
+                if(!valid) {
+                    final CheckWifi cd = new CheckWifi(getApplicationContext());
+                    hasInternet = cd.isConnectingToInternet(); // Checks for internet connection
+                }
 
-                boolean hasInternet = cd.isConnectingToInternet(); // Checks for internet connection
-
-                if (ID.matches(regexID) && hasInternet) {
+                if (ID.matches(regexID) && (hasInternet || valid)) {
                     Toast.makeText(getApplicationContext(), "Loading timetable...", Toast.LENGTH_SHORT).show();
-
-                    GetTimetable scraper = new GetTimetable(ID); // Scrapes UL Timetable website
-                    String textToPrint = scraper.getTextOutput(); // Get formatted timetable as a string
-
-                    printToFile(textToPrint); // Print formatted timetable to private file
+                    String exists = "0";
+                    if(valid )
+                        exists = "1";
                     txtID.setText(""); // Clear Student ID text field
-
                     Intent goToTimetable = new Intent(MainActivity.this, DisplayTimetable.class);
+                    goToTimetable.putExtra("id", ID);
+                    goToTimetable.putExtra("exists", exists);
                     MainActivity.this.startActivity(goToTimetable);
                 }
 
@@ -87,17 +94,5 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void printToFile(String text) {
-        String fileName = "ULTimetable";
-        FileOutputStream outputStream = null;
-        try {
-            outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
-            outputStream.write(text.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

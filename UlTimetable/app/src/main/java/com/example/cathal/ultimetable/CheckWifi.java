@@ -4,9 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-/**
- * Created by Cathal on 28/05/2015.
- */
 public class CheckWifi {
     private Context _context;
 

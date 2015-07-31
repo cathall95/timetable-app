@@ -53,7 +53,6 @@ public class GetTimetable implements Runnable {
                 }
             }
             this.textOutput = output;
-            return;
         }
         catch (Exception e) {
             e.printStackTrace();
